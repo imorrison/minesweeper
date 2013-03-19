@@ -60,6 +60,7 @@ class Board
 
   def expose_square(coords)
     if is_bomb?(coords)
+      set_square(coords, "B")
       lose
     elsif is_flag?(coords)
       puts "That is a Flag, pick another square!"
@@ -122,7 +123,7 @@ class Board
   end
 
   def game_over?
-    true if @win || @lose
+    true if @win || @lost
   end
 
 end
@@ -150,6 +151,7 @@ class Minesweeper
       @board.display_board
       prompt_user
     end
+    @board.display_board
     puts "Game over!"
   end
 
