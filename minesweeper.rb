@@ -107,4 +107,24 @@ end
 
 class Minesweeper
 
+  def initialize
+    @board
+  end
+
+  def run
+    puts "New Game or Load Game? (n/l)"
+    start = gets.chomp.downcase
+
+    if start=='l'
+      #load a game file
+    else
+      @board = Board.new
+    end
+    prompt_user
+  end
+
+  def prompt_user
+    puts "prompting the user!"
+  end
+
 end
