@@ -1,6 +1,8 @@
 class Board
   def initialize
     @matrix = Array.new(9) { Array.new(9) { {b: false, display: "*"} } }
+    @lost = false
+    @win = false
     set_bombs
   end
 
@@ -58,7 +60,7 @@ class Board
 
   def expose_square(coords)
     if is_bomb?(coords)
-      puts "Game over: bomb found in #{coords}"
+      lose
     elsif is_flag?(coords)
       puts "That is a Flag, pick another square!"
     elsif exposed?(coords)
@@ -103,6 +105,26 @@ class Board
     end
     bomb_num
   end
+
+  def lose
+    @lost = true
+  end
+
+  def win
+    # find '*' if no '*' then all bombs are flagged, win!
+    stars = []
+    @matrix.length.times do | x |
+      @matrix[0].length.times do | y |
+        stars << '*' if @matrix[x][y][:display] == '*'
+      end
+    end
+    @win = true if b.empty?
+  end
+
+  def game_over?
+    true if @win || @lose
+  end
+
 end
 
 class Minesweeper
@@ -111,7 +133,7 @@ class Minesweeper
     @board
   end
 
-  def run
+  def load_game
     puts "New Game or Load Game? (n/l)"
     start = gets.chomp.downcase
 
@@ -120,11 +142,39 @@ class Minesweeper
     else
       @board = Board.new
     end
-    prompt_user
+    play
+  end
+
+  def play
+    until @board.game_over?
+      @board.display_board
+      prompt_user
+    end
+    puts "Game over!"
   end
 
   def prompt_user
-    puts "prompting the user!"
+    puts "Reveal a square or flag a square? (r/f)\n"
+    type_of_action = gets.chomp.downcase
+    puts "Pick a Coordinate"
+    # user enters two numbers, one space, no comma
+    coord = gets.chomp.split(' ').map(&:to_i)
+    if type_of_action == 'f'
+      @board.set_flag(coord)
+    elsif type_of_action == 'r'
+      @board.expose_square(coord)
+    end
   end
-
 end
+
+m = Minesweeper.new
+m.load_game
+
+
+
+
+
+
+
+
+
