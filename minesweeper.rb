@@ -2,10 +2,14 @@ require 'json'
 
 class Board
   attr_reader :matrix
+  #REV might be nice to have a comment on how your matrix stores all the state since its 3d
+  #also, maybe better to not expose matrix like this, since it could be modified
+  
   def initialize(matrix=nil)
     if matrix
       @matrix = matrix
     else
+      #REV usually better to not have magic numbers, like the 9 here. perhaps you could use a constant
       @matrix = Array.new(9) { Array.new(9) { {b: false, display: "*"} } }
     end
     @lost, @win = false, false
@@ -23,14 +27,14 @@ class Board
 
   def set_bombs
     bombs_coords.each do |coord|
-      @matrix[coord[0]][coord[1]][:b] = true
+      @matrix[coord[0]][coord[1]][:b] = true  #REV 3d array?
     end
   end
 
   def bombs_coords
     bomb_array = []
     until bomb_array.length == 10
-      bomb_coords = [rand(9), rand(9)]
+      bomb_coords = [rand(9), rand(9)]  #REV nice way to randomly place bombs
       unless bomb_array.include?(bomb_coords)
         bomb_array << bomb_coords
       end
@@ -47,6 +51,11 @@ class Board
   end
 
   def find_neighbors(coords)
+    #REV personally I think that if you have so many offsets, might be better to do something like
+    # -1.upto(1) do |x_offset|
+    #   -1.upto(1) do |y_offset|
+    # ...
+    # kind of thing. but this is also a good way to do it
     vectors = [[-1,-1],[-1,0],[-1,1],[0,-1],[0,1],[1,-1],[1,0],[1,1]]
     neighbors = []
     vectors.each do |vector|
@@ -64,7 +73,7 @@ class Board
   end
 
   def expose_square(coords)
-    if is_bomb?(coords)
+    if is_bomb?(coords)   #REV the helper methods here are definitely very good
       set_square(coords, "B")
       lose
     elsif is_flag?(coords)
@@ -76,7 +85,7 @@ class Board
     end
   end
 
-  def exposed?(coords)
+  def exposed?(coords)  #REV great helper methods
     current_state = display_square(coords)[:display]
     current_state.is_a?(Fixnum) ? true : false
   end
@@ -118,6 +127,7 @@ class Board
 
   def win
     # find '*' if no '*' then all bombs are flagged, win!
+    # REV might be more clear if you made a method like all_revealed? or something
     stars = []
     @matrix.length.times do | x |
       @matrix[0].length.times do | y |
@@ -134,19 +144,19 @@ class Board
 end
 
 class Minesweeper
-  def initialize
+  def initialize    #REV this constructor doesn't actually do anything, so its not required
     @board
   end
 
   def load_game
-    puts "New Game or Load Game? (n/l)"
+    puts "New Game or Load Game? (n/l)"   #REV the prompt here is nice
     start = gets.chomp.downcase
 
     if start=='l'
       load_file
     else
       @board = Board.new
-      @board.set_bombs
+      @board.set_bombs  #REV a bit weird that you call set_bombs and this is not done on Board construction
     end
     play
   end
@@ -157,7 +167,7 @@ class Minesweeper
       prompt_user
     end
     @board.display_board
-    puts "Game over!"
+    puts "Game over!"     #REV might be nice to know if user won or lost
   end
 
   def prompt_user
@@ -191,14 +201,28 @@ class Minesweeper
   end
 end
 
+#REV file is over 200 lines long, definitely benefit from moving the classes into separate files
+
+=begin
+REV The way Minesweeper is made now, it is a little error prone. For example, the user could do
+Minesweeper.new.play, in which case the @board is nil and program will crash. Consider making the
+constructor of Minesweeper protected, and use factory methods to create an instance of Minesweeper.
+for example:
+
+def self.new_game
+  Minesweeper.new(Board.new)
+end
+
+protected
+def initialize(board)
+  @board = board
+end
+
+REV great job overall
+=end
+
 m = Minesweeper.new
 m.load_game
-
-
-
-
-
-
 
 
 
