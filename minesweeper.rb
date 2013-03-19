@@ -104,3 +104,7 @@ class Board
     bomb_num
   end
 end
+
+class Minesweeper
+
+end
