@@ -2,21 +2,19 @@ require_relative './board.rb'
 require 'json'
 
 class Minesweeper
-  def initialize    #REV this constructor doesn't actually do anything, so its not required
-    @board
+  def initialize  
+    load_game
   end
 
   def load_game
-    puts "New Game or Load Game? (n/l)"   #REV the prompt here is nice
+    puts "New Game or Load Game? (n/l)" 
     start = gets.chomp.downcase
 
     if start=='l'
       load_file
     else
-      @board = Board.new
-      @board.set_bombs  #REV a bit weird that you call set_bombs and this is not done on Board construction
+      @board = Board.new_board
     end
-    play
   end
 
   def play
@@ -25,7 +23,7 @@ class Minesweeper
       prompt_user
     end
     @board.display_board
-    puts "Game over!"     #REV might be nice to know if user won or lost
+    puts "Game over!" # add won or lost
   end
 
   def prompt_user
@@ -59,28 +57,11 @@ class Minesweeper
   end
 end
 
-#REV file is over 200 lines long, definitely benefit from moving the classes into separate files
 
-=begin
-REV The way Minesweeper is made now, it is a little error prone. For example, the user could do
-Minesweeper.new.play, in which case the @board is nil and program will crash. Consider making the
-constructor of Minesweeper protected, and use factory methods to create an instance of Minesweeper.
-for example:
-
-def self.new_game
-  Minesweeper.new(Board.new)
+if __FILE__ == $PROGRAM_NAME
+  m = Minesweeper.new
+  m.play
 end
-
-protected
-def initialize(board)
-  @board = board
-end
-
-REV great job overall
-=end
-
-m = Minesweeper.new
-m.load_game
 
 
 
