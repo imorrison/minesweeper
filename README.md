@@ -3,5 +3,5 @@ minesweeper
 
 minesweeper game!
 
-todo 
+todo: 
 * add timer

@@ -6,9 +6,9 @@ class Board
     [1 , 0],[1 , 1]
   ]
   
-  # Board is stored as a 2d array containing hashs. Each hash as a display key set to '*'
-  # signifing that the square has not yet been revealed. Each hash also has a b: key wich
-  # is a boolean: true if is if a bomb, false if it is not. 
+  # Board is stored as a 2d array containing hashs. Each hash has a display key set to '*'
+  # signifing that the square is not revealed. Each hash also has a b: key which
+  # is a boolean: true if is is a bomb, false if it is not. 
     
   def self.new_board(size=9)
     new_game = Board.new(Array.new(size) { Array.new(size) { {b: false, display: "*"} } } )
